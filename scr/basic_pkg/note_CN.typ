@@ -16,7 +16,7 @@ set page(
   header: align(right)[#text(8pt)[#title]#line(length: 100%)],
   numbering: "1"
 )
-//设置字体为英文自由字体，中文宋体。字号10pt
+//设置字体为英文自由字体，中文宋体。字号14pt
 set text(
   font: ("Linux Libertine","SimSun"),
   size: 14pt,
@@ -29,12 +29,17 @@ set heading(numbering: notenumbering)
   par(strong(text(18pt,title)))
   text(10pt,author)
 }
-show heading : it => {
-  set text(fill: blue )
-  underline(it) 
-}
+show heading : set text(blue)
 outline(title: strong[目录],indent: 1em)
 // 正文
 set align(left)
 doc 
 }
+
+#let showset = (
+  "笔记标题" : [居中+黑体+18pt],
+  "作者" : [10pt+居中],
+  "页眉" : [8pt+right+展示title],
+  "正文" : [14pt+Simsun+Linux Libertine],
+  "段落标号" : [1级标题为中文大写数字，其余为编号],
+)
