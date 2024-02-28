@@ -33,6 +33,7 @@ show heading : set text(blue)
 outline(title: strong[目录],indent: 1em)
 // 正文
 set align(left)
+set par(first-line-indent: 2em)
 doc 
 }
 
