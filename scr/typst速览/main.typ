@@ -1,75 +1,24 @@
 #import "../basic_pkg/note_CN.typ"
+#import "../basic_pkg/par.typ" : abstact
+#import "../basic_pkg/table.typ" : webtable 
+#import "../basic_pkg/board.typ" : code-board,result-board,background-board
 #show : doc => note_CN.conf(
   title: "typst速览笔记",
   author: text(blue)[sicheng1806],
+  _numbering: true,
   doc
 )
-#let abstact(title:[#text(14pt)[摘要]],fontsize:12pt,doc) = {
-  set text(fontsize)
-  set align(center)
-  par(title)
-  par[#box(width: 2em)#doc]
-}
-#let webtable(
-  columns: (),
-  gutter: (),
-  column-gutter : (),
-  row-gutter : (),
-  fill : none,
-  align : auto,
-  titleline : 1pt + black,
-  inset : 5pt,
-  linestroke: gray,
-  ..children
-) = {
-  set table(columns: columns,gutter: gutter,column-gutter: column-gutter,
-          row-gutter: row-gutter,stroke: none,align: align,fill:fill,inset:inset)
-  let _col = 0 
-  if type(columns) == int {
-    _col = columns
-  } else {
-    _col = columns.len()
-  }
-  let titles = children.pos().slice(0,_col)
-  let content = children.pos().slice(_col)
-  stack(
-    table(..titles.map(it => strong(it))),
-    line(length: 100%,stroke:linestroke),
-    table(..content)
-    )
-}
-#let ind2 = box(width: 2em)
-
-#let background-board(width:auto,out-fill:luma(90%),in-fill:white,radius: 0pt,out-inset: 0pt,_align: center,in-inset:10pt,body) = {
-  set align(_align)
-  block(
-    radius: radius,width: width,fill:out-fill,inset: out-inset,
-    block(width: 100%,fill:in-fill,inset:in-inset,body)
-    )
-}
-#let result-board(width:auto,body) = {
-  background-board(width:width,radius:4pt,out-inset:6pt,_align:center,body)
-}
-#let code-board(width: auto,body) = {
-  set align(left)
-  background-board(width: width,radius: 1pt ,out-inset: 1pt,out-fill:luma(80%),_align:left,body)
-}
-//
-#show terms.item : it => {
-  [#it <term_item>]
-}
+// 设置一些小函数
+#let ind2 = h(2em)
+// 给术语每一项加标签用于索引
 
 // ---------------------正文------------------------------------
+
 #abstact()[
   typst具有代码模式和文本模式
-]
+] 
 = 术语表
-#locate(loc => {
-  set par(first-line-indent: 0em)
-  background-board(_align:left,out-fill:luma(0%))[#for q in query(<term_item>,loc) {
-    [- #q]
-  }]
-})
+#note_CN.term-list()
 = 文本模式符号速览
 
 == 常用结构化标记
@@ -379,5 +328,3 @@ raw函数可进一步设置文本显示情况,也可以通过 `show-set规则` �
 / measure: 和 style函数结合使用来获取指定内容的大小
 / layout: 提供对当前外部容器大小的访问
 ]
-
-
