@@ -54,12 +54,22 @@
   set align(left)
   background-board(width: width,radius: 1pt ,out-inset: 1pt,out-fill:luma(80%),_align:left,body)
 }
+//
+#show terms.item : it => {
+  [#it <term_item>]
+}
 
 // ---------------------正文------------------------------------
 #abstact()[
   typst具有代码模式和文本模式
 ]
-
+= 术语表
+#locate(loc => {
+  set par(first-line-indent: 0em)
+  background-board(_align:left,out-fill:luma(0%))[#for q in query(<term_item>,loc) {
+    [- #q]
+  }]
+})
 = 文本模式符号速览
 
 == 常用结构化标记
@@ -235,7 +245,10 @@ raw函数可进一步设置文本显示情况,也可以通过 `show-set规则` �
     ])]
   ),
   ("figure","带有可选描述的图表",result-board[略]),
-  ("terms","术语列表",result-board[略])
+  ("terms","术语列表",result-board[略]),
+  ("image","图形的加载接口",result-board[略]),
+  ("bibliography","一份参考文献",result-board[略]),
+  ("outline","目录、图表或其他元素的大纲",result-board[略])
 ) {
   set par(first-line-indent: 0pt)
   set terms(
@@ -252,3 +265,119 @@ raw函数可进一步设置文本显示情况,也可以通过 `show-set规则` �
 }
 
 === 基础布局类
+
+#for ele in (
+  ("block","自适应给定宽度或高度圆角方形外联容器",result-board(width:100%)[#block(width: 2em,height: 2em,fill: blue)]),
+  ("rect","更适合几何控制的外联容器",result-board[#rect(height: 2em,fill: blue)[#rect(height: 2em,width: 1em,fill:red)#rect(height: 2em,width: 1em,fill:red)]]),
+  ("box","一个内联级容器，可调整内容的大小",result-board[略]),
+  ("grid","将内容排列成网格",result-board[略]),
+  ("pad","在内容周围添加间距",result-board[#pad(bottom: 2em,rect(fill:blue)[bottom:2em])_Typing speeds can be
+ measured in words per minute._]),
+  ("stack","实现内容按指定方向的快速堆叠",result-board[#stack(box(fill: blue,width: 1em,height: 1em),"你好" ,box(fill: blue,width: 1em,height: 1em))])
+) {
+  set par(first-line-indent: 0pt)
+  set terms(
+      separator: "——",
+    )
+  show terms : it => {
+    stack(dir:ltr,emoji.face.explode,it)
+  }
+  par[
+  / #ele.at(0): #ele.at(1) \
+  *示例* : \
+  #ele.at(2)
+ ]
+}
+
+==== rect 和 block的区别
+
+#ind2 block是个自适应极强的容器，如果在block进行多重嵌套，且只有block，会发现其width或者height参数失效，而rect不会发生这样的情况。
+
+所以如果希望目标容器可以根据内容自适应排版选择block，如果希望其的大小可以严格控制，选择rect。
+
+=== 可调全局布局的容器
+
+#ind2 这一类容器按照一定的逻辑结构将文本和其他内容排列成整个文档。
+
+#for ele in (
+  (
+    "document",
+    "这个文档的根元素同时包含着其元数据，一般用于设置元数据",
+    code-board[
+  ```typst
+    #set document(title: [Hello])
+    This has no visible output, but
+    embeds metadata into the PDF!
+  ```]
+  ),
+  ("page","将其中的内容布局进一个或多个页面,可以用来设置页面的样式",code-board[
+  ```typst
+    #set page("us-letter")
+    There you go, US friends!
+  ```]),
+  ("par","管理一个段落中的文档、间距和行内元素，可以用来设置段落样式",code-board[
+    ```typst 
+      #show par : set block(spacing: 2em) // 段落垂直间距
+      #set par(
+            first-line-indent: 1em, // 首行缩进
+            justify: true, // 对齐
+          )
+    ```]),
+  ("text","以各种方式自定义文本的外观和布局。一般用来设置",result-board[#text(fill: red)[红色字体]]),
+  ("columns","将区域分割为多个大小相等的列。",result-board[
+    #columns(2,gutter: 11pt)[
+    #set par(justify: true)
+    This research was funded by the
+    National Academy of Sciences.
+    NAoS provided support for field
+    tests and interviews with a
+    grant of up to USD 40.000 for a
+    period of 6 months.
+   ]]),
+   ("align","将内容垂直和水平对齐",result-board[
+    #set align(center)
+
+    Centered text, a sight to see \
+    In perfect balance, visually \
+    Not left nor right, it stands alone \
+    A work of art, a visual throne
+   ])
+  
+) {
+  set par(first-line-indent: 0pt)
+  set terms(
+      separator: "——",
+    )
+  show terms : it => {
+    stack(dir:ltr,emoji.face.explode,it)
+  }
+  par[
+  / #ele.at(0): #ele.at(1) \
+  *示例* : \
+  #ele.at(2)
+ ]
+}
+
+=== 变换工具
+
+#for (_func , mean) in (
+  "rotate" : "旋转内容而不影响布局",
+  "move" : "移动内容而不影响布局",
+  "hide" : "隐藏内容而不影响布局",
+  "scale" : "缩放内容而不影响布局"
+) {
+  set terms(
+    separator: "  "+emoji.bubble.speech+"——",
+  )
+  [/ #_func: #mean]
+}
+
+=== 获取内容的布局元素大小
+
+#[
+#set par(first-line-indent: 0em)
+/ measure: 和 style函数结合使用来获取指定内容的大小
+/ layout: 提供对当前外部容器大小的访问
+]
+
+
